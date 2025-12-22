@@ -110,12 +110,12 @@ The extracted text will appear here!`;
             onDrop={handleDrop}
             onClick={() => fileInputRef.current?.click()}
             className={`
-              relative cursor-pointer border-[var(--border-width)] border-dashed border-foreground
+              relative cursor-pointer  border-dashed border-foreground
               bg-background p-12 transition-all duration-200
               ${
                 isDragging
-                  ? "translate-x-[-8px] translate-y-[-8px] bg-accent shadow-[8px_8px_0px_var(--shadow)]"
-                  : "shadow-[4px_4px_0px_var(--shadow)] hover:translate-x-[-4px] hover:translate-y-[-4px] hover:shadow-[8px_8px_0px_var(--shadow)]"
+                  ? "-translate-x-2 -translate-y-2 bg-accent shadow-[8px_8px_0px_var(--shadow)]"
+                  : "shadow-[4px_4px_0px_var(--shadow)] hover:-translate-x-1 hover:-translate-y-1 hover:shadow-[8px_8px_0px_var(--shadow)]"
               }
             `}
           >
@@ -170,7 +170,7 @@ The extracted text will appear here!`;
               transition-all duration-150 disabled:opacity-40 disabled:cursor-not-allowed
               ${
                 !isExtracting && selectedFile
-                  ? "hover:translate-x-1 hover:-translate-y-1 hover:shadow-[8px_8px_0px_var(--shadow)] active:translate-x-0 active:translate-y-0 active:shadow-none"
+                  ? "hover:-translate-x-1 hover:-translate-y-1 hover:shadow-[8px_8px_0px_var(--shadow)] active:translate-x-0 active:translate-y-0 active:shadow-none"
                   : ""
               }
               shadow-[4px_4px_0px_var(--shadow)]
@@ -196,7 +196,7 @@ The extracted text will appear here!`;
               transition={{ duration: 0.4 }}
               className="mt-8"
             >
-              <div className="border-[var(--border-width)] border-foreground bg-background p-6 shadow-[4px_4px_0px_var(--shadow)]">
+              <div className="border-foreground bg-background p-6 shadow-[4px_4px_0px_var(--shadow)]">
                 <div className="mb-4 flex items-center justify-between">
                   <h2 className="text-xl font-black uppercase">
                     Extracted Text
@@ -208,8 +208,8 @@ The extracted text will appear here!`;
                       px-4 py-2 font-bold uppercase transition-all duration-150
                       ${
                         isCopied
-                          ? "bg-accent translate-x-[-2px] translate-y-[-2px] shadow-[4px_4px_0px_var(--shadow)]"
-                          : "bg-background hover:translate-x-[-2px] hover:translate-y-[-2px] hover:shadow-[4px_4px_0px_var(--shadow)] active:translate-x-0 active:translate-y-0 active:shadow-none"
+                          ? "bg-accent -translate-x-0.5 -translate-y-0.5 shadow-[4px_4px_0px_var(--shadow)]"
+                          : "bg-background hover:-translate-x-0.5 hover:-translate-y-0.5 hover:shadow-[4px_4px_0px_var(--shadow)] active:translate-x-0 active:translate-y-0 active:shadow-none"
                       }
                     `}
                   >
