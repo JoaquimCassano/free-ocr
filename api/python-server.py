@@ -13,26 +13,31 @@ def fetchModel():
   from huggingface_hub import snapshot_download
   snapshot_download(MODEL_NAME, local_dir=f'{MODEL_VOLUME_PATH}/{MODEL_NAME}')
 
-def install_flash_attn():
-    import subprocess
-    subprocess.run([
-        "pip", "install", "flash-attn==2.7.3", "--no-build-isolation"
-    ], check=True)
+
+cuda_version = "12.1.0"
+flavor = "devel"
+operating_sys = "ubuntu22.04"
+tag = f"{cuda_version}-{flavor}-{operating_sys}"
 
 model_image = (
-    modal.Image.debian_slim(python_version="3.11")
+    modal.Image.from_registry(f"nvidia/cuda:{tag}", add_python="3.11")
+    .entrypoint([])
     .uv_pip_install(
         "torch",
-        "transformers",
+        "transformers==4.47.1",
         "tokenizers",
         "einops",
         "addict",
         "easydict",
+        "huggingface_hub",
+        "wheel",
+        "pillow",
+        "matplotlib",
+        "torchvision",
         extra_index_url="https://download.pytorch.org/whl/cu121",
     )
-    .run_function(
-        install_flash_attn
-    )
+    .uv_pip_install(
+       "flash-attn", extra_options="--no-build-isolation")
     .env(
         {
             "HF_HOME": "/cache",
