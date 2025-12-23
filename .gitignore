@@ -1,2 +1,4 @@
 .playwright-mcp/
 .env
+__pycache__/
+*.pyc
