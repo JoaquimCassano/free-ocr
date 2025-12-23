@@ -23,7 +23,7 @@ def clean_output(text, include_images=False):
     pattern = r'(<\|ref\|>(.*?)<\|/ref\|><\|det\|>(.*?)<\|/det\|>)'
     matches = re.findall(pattern, text, re.DOTALL)
     img_num = 0
-    
+
     for match in matches:
         if '<|ref|>image<|/ref|>' in match[0]:
             if include_images:
@@ -33,7 +33,7 @@ def clean_output(text, include_images=False):
                 text = text.replace(match[0], '', 1)
         else:
             text = re.sub(rf'(?m)^[^\n]*{re.escape(match[0])}[^\n]*\n?', '', text)
-    
+
     return text.strip()
 
 def fetchModel():

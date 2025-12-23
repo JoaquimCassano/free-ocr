@@ -48,24 +48,45 @@ export default function Home() {
     setIsExtracting(true);
     setExtractedText("");
 
-    // Mock OCR response. TODO: Replace with actual OCR logic (need to complete the python api first)
-    await new Promise((resolve) => setTimeout(resolve, 2000));
+    try {
+      const reader = new FileReader();
+      const base64Promise = new Promise<string>((resolve, reject) => {
+        reader.onload = () => {
+          const base64 = reader.result as string;
+          const base64Data = base64.split(",")[1];
+          resolve(base64Data);
+        };
+        reader.onerror = reject;
+      });
 
-    const mockText = `This is a mock OCR response.
+      reader.readAsDataURL(selectedFile);
+      const base64Data = await base64Promise;
 
-Replace the handleExtract function with your actual OCR implementation.
+      const response = await fetch(
+        "https://soumnerd--flavortown-ocr-deepseekocr-extract.modal.run/",
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            image_data: base64Data,
+          }),
+        }
+      );
 
-You can use services like:
-- Tesseract.js (client-side)
-- Google Cloud Vision API
-- AWS Textract
-- Azure Computer Vision
-- Or any other OCR service
+      if (!response.ok) {
+        throw new Error(`API request failed: ${response.statusText}`);
+      }
 
-The extracted text will appear here!`;
-
-    setExtractedText(mockText);
-    setIsExtracting(false);
+      const data = await response.json();
+      setExtractedText(data.text || "No text extracted");
+    } catch (error) {
+      console.error("OCR extraction failed:", error);
+      setExtractedText("Error: Failed to extract text. Please try again.");
+    } finally {
+      setIsExtracting(false);
+    }
   };
 
   const handleCopy = async () => {
