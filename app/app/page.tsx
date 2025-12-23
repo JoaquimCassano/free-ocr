@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useRef } from "react";
+import { useState, useRef, useEffect } from "react";
 import { Copy, CheckCircle2, ImageIcon, Loader2 } from "lucide-react";
 import { motion, AnimatePresence } from "motion/react";
 
@@ -12,6 +12,28 @@ export default function Home() {
   const [isCopied, setIsCopied] = useState(false);
   const [previewUrl, setPreviewUrl] = useState<string | null>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
+
+  useEffect(() => {
+    const handlePaste = (e: ClipboardEvent) => {
+      const items = e.clipboardData?.items;
+      if (items) {
+        for (let i = 0; i < items.length; i++) {
+          if (items[i].type.startsWith("image/")) {
+            const file = items[i].getAsFile();
+            if (file) {
+              setSelectedFile(file);
+              setPreviewUrl(URL.createObjectURL(file));
+              setExtractedText("");
+            }
+            break;
+          }
+        }
+      }
+    };
+
+    document.addEventListener("paste", handlePaste);
+    return () => document.removeEventListener("paste", handlePaste);
+  }, []);
 
   const handleDragOver = (e: React.DragEvent) => {
     e.preventDefault();
