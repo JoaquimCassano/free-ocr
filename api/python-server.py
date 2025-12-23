@@ -1,5 +1,6 @@
 import modal
 from pathlib import Path
+from typing import Literal
 
 app = modal.App()
 
@@ -12,17 +13,25 @@ def fetchModel():
   from huggingface_hub import snapshot_download
   snapshot_download(MODEL_NAME, local_dir=f'{MODEL_VOLUME_PATH}/{MODEL_NAME}')
 
+def install_flash_attn():
+    import subprocess
+    subprocess.run([
+        "pip", "install", "flash-attn==2.7.3", "--no-build-isolation"
+    ], check=True)
+
 model_image = (
     modal.Image.debian_slim(python_version="3.11")
     .uv_pip_install(
-        "torch==2.7.1",
-        "transformers==4.54.1",
-        "flash-attn==2.7.4",
-        "safetensors==0.4.5",
-        "pillow==11.0.0",
-        "fastapi[standard]==0.115.4",
-        "pydantic==2.9.2",
+        "torch",
+        "transformers",
+        "tokenizers",
+        "einops",
+        "addict",
+        "easydict",
         extra_index_url="https://download.pytorch.org/whl/cu121",
+    )
+    .run_function(
+        install_flash_attn
     )
     .env(
         {
@@ -38,7 +47,7 @@ model_image = (
 
 @app.cls(
     image=model_image,
-    gpu="A100", # overkill? maybe, but F it
+    gpu="L4", # overkill? maybe, but F it
     volumes=volumes,
 )
 class DeepSeekOCR:
@@ -62,7 +71,7 @@ class DeepSeekOCR:
     @modal.method()
     def extract_text(self, image_bytes: bytes, prompt: str = None) -> str:
         if prompt is None:
-            prompt = "<image>\n<|grounding|>Convert the document to markdown."
+            prompt = "<image>\n>Convert the document to markdown."
 
         import tempfile
         with tempfile.NamedTemporaryFile(suffix='.jpg', delete=False) as f:
@@ -80,7 +89,7 @@ class DeepSeekOCR:
         return result
 
     @modal.fastapi_endpoint(method="POST", docs=True)
-    def web(self, image: bytes, prompt: str = None) -> dict:
-        """Endpoint web"""
+    async def extract(self, image: bytes, prompt: str = None) -> dict:
+        """Extracts the text from the given image using OCR."""
         text = self.extract_text.local(image, prompt)
         return {"text": text}
