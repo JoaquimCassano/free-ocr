@@ -222,24 +222,41 @@ export default function Home() {
   const currentDisplayText = extractedVersions[selectedMode] || extractedText;
 
   return (
-    <div className="min-h-screen bg-background p-3 sm:p-4 md:p-6 lg:p-8">
-      <main className="mx-auto max-w-450">
+    <div
+      className="min-h-screen bg-background p-3 sm:p-4 md:p-6 lg:p-8 relative overflow-hidden"
+      style={{
+        backgroundImage: `
+          linear-gradient(to right, rgba(0, 0, 0, 0.08) 1px, transparent 1px),
+          linear-gradient(to bottom, rgba(0, 0, 0, 0.08) 1px, transparent 1px)
+        `,
+        backgroundSize: "40px 40px",
+      }}
+    >
+      <div className="absolute top-10 right-10 w-32 h-32 bg-accent-secondary rotate-45 opacity-20 -z-10" />
+      <div className="absolute bottom-20 left-20 w-40 h-40 rounded-full bg-accent-tertiary opacity-15 -z-10" />
+      <div className="absolute top-1/3 left-10 w-24 h-24 bg-accent-yellow opacity-20 -z-10" />
+      <main className="mx-auto max-w-450 relative z-10">
         <motion.div
           initial={{ opacity: 0, y: -20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.5 }}
-          className="mb-6 text-center sm:mb-8 lg:mb-10"
+          className="mb-6 text-center sm:mb-8 lg:mb-10 relative"
         >
+          <div className="absolute -top-4 -left-4 w-12 h-12 border-4 border-accent rotate-12 hidden md:block" />
+          <div className="absolute -top-2 -right-6 w-8 h-8 bg-accent-secondary hidden md:block" />
           <h1
-            className="mb-2 text-3xl font-black uppercase tracking-tight sm:text-4xl md:text-5xl lg:text-6xl"
+            className="mb-3 text-4xl font-black uppercase tracking-tight sm:text-5xl md:text-6xl lg:text-7xl xl:text-8xl relative inline-block"
             style={{
-              textShadow: "4px 4px 0px var(--accent)",
+              textShadow: "6px 6px 0px var(--accent-secondary)",
             }}
           >
-            FREE OCR
+            <span className="relative z-10">FREE OCR</span>
           </h1>
-          <p className="text-sm font-bold uppercase tracking-wide opacity-80 sm:text-base md:text-lg lg:text-xl">
-            ocr without bullshit.
+          <p
+            className="text-sm font-bold uppercase tracking-wide sm:text-base md:text-lg lg:text-xl"
+            style={{ color: "var(--accent-secondary)" }}
+          >
+            ocr without bullshit
           </p>
         </motion.div>
 
@@ -262,12 +279,12 @@ export default function Home() {
                 onDrop={handleDrop}
                 onClick={() => fileInputRef.current?.click()}
                 className={`
-                  relative cursor-pointer border-dashed border-foreground
-                  bg-background p-5 transition-all duration-200 md:p-8 lg:p-10 lg:min-h-100 flex items-center justify-center
+                  relative cursor-pointer border-[5px] border-dashed border-foreground
+                  bg-white p-5 transition-all duration-200 md:p-8 lg:p-10 lg:min-h-100 flex items-center justify-center
                   ${
                     isDragging
-                      ? "-translate-x-2 -translate-y-2 bg-accent shadow-[8px_8px_0px_var(--shadow)]"
-                      : "shadow-[4px_4px_0px_var(--shadow)] hover:-translate-x-1 hover:-translate-y-1 hover:shadow-[8px_8px_0px_var(--shadow)]"
+                      ? "-translate-x-2 -translate-y-2 shadow-[10px_10px_0px_var(--accent)]"
+                      : "shadow-[6px_6px_0px_var(--accent-tertiary)] hover:-translate-x-1 hover:-translate-y-1 hover:shadow-[10px_10px_0px_var(--accent)]"
                   }
                 `}
               >
@@ -323,18 +340,23 @@ export default function Home() {
                 onClick={handleExtract}
                 disabled={!selectedFile || isExtracting}
                 className={`
-                  w-full border-foreground bg-accent p-4 md:p-5
+                  w-full border-[5px] border-foreground bg-accent p-4 md:p-5 relative overflow-hidden
                   text-base md:text-lg font-black uppercase tracking-wide text-foreground
                   transition-all duration-150 cursor-pointer disabled:opacity-40 disabled:cursor-not-allowed
                   lg:text-2xl lg:p-6
                   ${
                     !isExtracting && selectedFile
-                      ? "hover:-translate-x-1 hover:-translate-y-1 hover:shadow-[8px_8px_0px_var(--shadow)] active:translate-x-0 active:translate-y-0 active:shadow-none"
+                      ? "hover:-translate-x-2 hover:-translate-y-2 hover:shadow-[10px_10px_0px_var(--shadow)] active:translate-x-0 active:translate-y-0 active:shadow-none"
                       : ""
                   }
-                  shadow-[4px_4px_0px_var(--shadow)]
+                  shadow-[6px_6px_0px_var(--shadow)]
                 `}
+                style={{
+                  background:
+                    selectedFile && !isExtracting ? "var(--accent)" : undefined,
+                }}
               >
+                <div className="absolute top-0 right-0 w-16 h-16 bg-accent-secondary opacity-30 rotate-45 -translate-y-8 translate-x-8" />
                 <div className="flex flex-col items-center gap-1">
                   {isExtracting ? (
                     <>
@@ -369,7 +391,9 @@ export default function Home() {
                 transition={{ duration: 0.4 }}
                 className="lg:row-start-1 lg:row-span-2"
               >
-                <div className="border-foreground bg-background p-4 md:p-5 shadow-[4px_4px_0px_var(--shadow)] lg:h-full flex flex-col">
+                <div className="border-[5px] border-foreground bg-white p-4 md:p-5 shadow-[6px_6px_0px_var(--accent-secondary)] lg:h-full flex flex-col relative overflow-hidden">
+                  <div className="absolute top-0 left-0 w-20 h-2 bg-accent" />
+                  <div className="absolute top-0 right-0 w-2 h-20 bg-accent-tertiary" />
                   <div className="mb-3 flex items-center justify-between shrink-0 gap-2 flex-wrap md:gap-3 md:mb-4">
                     <h2 className="text-base font-black uppercase md:text-lg lg:text-2xl">
                       Extracted Text
@@ -400,8 +424,8 @@ export default function Home() {
                           px-3 py-2 font-bold uppercase transition-all duration-150 text-xs md:text-sm lg:text-base cursor-pointer
                           ${
                             isCopied
-                              ? "bg-accent -translate-x-0.5 -translate-y-0.5 shadow-[4px_4px_0px_var(--shadow)]"
-                              : "bg-background hover:-translate-x-0.5 hover:-translate-y-0.5 hover:shadow-[4px_4px_0px_var(--shadow)] active:translate-x-0 active:translate-y-0 active:shadow-none"
+                              ? "bg-accent -translate-x-1 -translate-y-1 shadow-[5px_5px_0px_var(--shadow)]"
+                              : "bg-white hover:-translate-x-1 hover:-translate-y-1 hover:shadow-[5px_5px_0px_var(--accent)] active:translate-x-0 active:translate-y-0 active:shadow-none"
                           }
                         `}
                       >
@@ -419,7 +443,7 @@ export default function Home() {
                       </button>
                     </div>
                   </div>
-                  <div className="flex-1 overflow-auto border-[3px] border-foreground bg-[#FFFEF9] p-3 md:p-4 lg:p-6">
+                  <div className="flex-1 overflow-auto border-[4px] border-foreground bg-[#FFFEF9] p-3 md:p-4 lg:p-6">
                     <pre className="whitespace-pre-wrap font-mono text-xs md:text-sm leading-relaxed lg:text-base lg:leading-loose">
                       {currentDisplayText}
                     </pre>
