@@ -1,4 +1,10 @@
-export const RESPONSE_MODES = ["markdown", "json", "pydantic", "zod", "plain"] as const;
+export const RESPONSE_MODES = [
+  "markdown",
+  "json",
+  "pydantic",
+  "zod",
+  "plain",
+] as const;
 
 export type ResponseMode = (typeof RESPONSE_MODES)[number];
 

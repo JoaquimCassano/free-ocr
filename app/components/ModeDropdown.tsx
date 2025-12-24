@@ -97,8 +97,8 @@ export function ModeDropdown({
                     mode === selectedMode
                       ? "bg-accent"
                       : isFailed || isLoading
-                        ? "bg-background opacity-50 cursor-not-allowed"
-                        : "bg-background hover:bg-accent"
+                      ? "bg-background opacity-50 cursor-not-allowed"
+                      : "bg-background hover:bg-accent"
                   }
                 `}
               >

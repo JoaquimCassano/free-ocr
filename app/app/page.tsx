@@ -190,8 +190,9 @@ export default function Home() {
   };
 
   const handleCopy = async () => {
-    if (extractedText) {
-      await navigator.clipboard.writeText(extractedText);
+    const textToCopy = extractedVersions[selectedMode] || extractedText;
+    if (textToCopy) {
+      await navigator.clipboard.writeText(textToCopy);
       setIsCopied(true);
       setTimeout(() => setIsCopied(false), 2000);
     }
