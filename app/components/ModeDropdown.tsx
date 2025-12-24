@@ -44,7 +44,7 @@ export function ModeDropdown({
         onClick={() => setIsOpen(!isOpen)}
         className={`
           flex items-center gap-2 border-[3px] border-foreground
-          px-4 py-2 font-bold uppercase transition-all duration-150
+          px-4 py-2 font-bold uppercase transition-all duration-150 cursor-pointer
           lg:text-lg lg:px-6 lg:py-3
           ${
             isCurrentLoading || isCurrentFailed

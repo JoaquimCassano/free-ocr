@@ -25,6 +25,8 @@ export default function Home() {
   });
   const [isLoadingVersions, setIsLoadingVersions] = useState(false);
   const [failedModes, setFailedModes] = useState<Set<ResponseMode>>(new Set());
+  const [showColdStartMessage, setShowColdStartMessage] = useState(false);
+  const coldStartTimeoutRef = useRef<NodeJS.Timeout | null>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   useEffect(() => {
@@ -48,6 +50,25 @@ export default function Home() {
     document.addEventListener("paste", handlePaste);
     return () => document.removeEventListener("paste", handlePaste);
   }, []);
+
+  useEffect(() => {
+    if (isExtracting) {
+      coldStartTimeoutRef.current = setTimeout(() => {
+        setShowColdStartMessage(true);
+      }, 5000);
+    } else {
+      if (coldStartTimeoutRef.current) {
+        clearTimeout(coldStartTimeoutRef.current);
+      }
+      setShowColdStartMessage(false);
+    }
+
+    return () => {
+      if (coldStartTimeoutRef.current) {
+        clearTimeout(coldStartTimeoutRef.current);
+      }
+    };
+  }, [isExtracting]);
 
   const handleDragOver = (e: React.DragEvent) => {
     e.preventDefault();
@@ -304,7 +325,7 @@ export default function Home() {
                 className={`
                   w-full border-foreground bg-accent p-4 md:p-5
                   text-base md:text-lg font-black uppercase tracking-wide text-foreground
-                  transition-all duration-150 disabled:opacity-40 disabled:cursor-not-allowed
+                  transition-all duration-150 cursor-pointer disabled:opacity-40 disabled:cursor-not-allowed
                   lg:text-2xl lg:p-6
                   ${
                     !isExtracting && selectedFile
@@ -314,18 +335,27 @@ export default function Home() {
                   shadow-[4px_4px_0px_var(--shadow)]
                 `}
               >
-                {isExtracting ? (
-                  <span className="flex items-center justify-center gap-2">
-                    <Loader2
-                      className="animate-spin"
-                      size={20}
-                      strokeWidth={3}
-                    />
-                    Extracting...
-                  </span>
-                ) : (
-                  "Extract Text"
-                )}
+                <div className="flex flex-col items-center gap-1">
+                  {isExtracting ? (
+                    <>
+                      <span className="flex items-center justify-center gap-2">
+                        <Loader2
+                          className="animate-spin"
+                          size={20}
+                          strokeWidth={3}
+                        />
+                        Extracting...
+                      </span>
+                      {showColdStartMessage && (
+                        <span className="text-xs md:text-sm font-semibold opacity-80 max-w-xs">
+                          This is a cold start. Might take up to a minute
+                        </span>
+                      )}
+                    </>
+                  ) : (
+                    "Extract Text"
+                  )}
+                </div>
               </button>
             </motion.div>
           </div>
@@ -367,7 +397,7 @@ export default function Home() {
                         onClick={handleCopy}
                         className={`
                           flex items-center gap-2 border-[3px] border-foreground
-                          px-3 py-2 font-bold uppercase transition-all duration-150 text-xs md:text-sm lg:text-base
+                          px-3 py-2 font-bold uppercase transition-all duration-150 text-xs md:text-sm lg:text-base cursor-pointer
                           ${
                             isCopied
                               ? "bg-accent -translate-x-0.5 -translate-y-0.5 shadow-[4px_4px_0px_var(--shadow)]"
